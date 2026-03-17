@@ -40,7 +40,7 @@ export async function generatePRDescription(analysis: DiffAnalysis): Promise<str
   // 关键变更
   if (keyChanges.length > 0) {
     parts.push(`\n✨ **Key Changes**\n`);
-    keyChanges.forEach((change, i) => {
+    keyChanges.forEach((change: string, i: number) => {
       parts.push(`1. ${change}\n`);
     });
   }
