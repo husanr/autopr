@@ -71,7 +71,7 @@ export async function generatePRDescription(analysis: DiffAnalysis, options?: {
   parts.push(`\n## 📁 变更文件清单\n`);
   if (keyChanges.length > 0) {
     keyChanges.forEach(change => {
-      parts.push(`- \`${change.split('(+)')[0].trim()}\`\n`);
+      parts.push(`- \`${change.split(' (+')[0].trim()}\`\n`);
     });
   } else {
     parts.push(`- 查看 diff 了解详细变更\n`);
@@ -83,12 +83,6 @@ export async function generatePRDescription(analysis: DiffAnalysis, options?: {
   parts.push(`2. ✅ 确认测试用例覆盖\n`);
   parts.push(`3. ✅ 确认代码规范符合项目标准\n`);
   parts.push(`4. ✅ 确认文档已更新\n`);
-
-  // TODO: 调用 LLM 生成更完善的描述（未来版本）
-  // const llmDescription = await callLLMForPRDescription(analysis);
-  // if (llmDescription) {
-  //   parts.push(`\n## 🤖 AI 补充建议\n\n${llmDescription}\n`);
-  // }
 
   return `# ${title}\n\n${parts.join('')}`;
 }
