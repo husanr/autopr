@@ -1,0 +1,30 @@
+diff --git a/src/core/DiffAnalyzer.ts b/src/core/DiffAnalyzer.ts
+index abc123..def456 100644
+--- a/src/core/DiffAnalyzer.ts
++++ b/src/core/DiffAnalyzer.ts
+@@ -1,5 +1,10 @@
+ /**
+- * Basic diff analyzer
++ * Core diff analysis module for AutoPR
++ * Analyzes git diffs and extracts meaningful information
+  */
+ 
++export interface DiffAnalysis {
++  summary: string;
++  filesChanged: number;
++}
++
+ export class DiffAnalyzer {
+   analyze(diff: string) {
+     return { summary: 'TODO' };
+@@ -10,3 +15,8 @@ export class DiffAnalyzer {
+     // Parse the diff content
+     // Count additions and deletions
+     // Extract file changes
++    const lines = diff.split('\n');
++    let additions = 0;
++    let deletions = 0;
++    // TODO: implement full parsing logic
++    return { summary: 'Basic analysis', filesChanged: 1, additions, deletions };
+   }
+ }
