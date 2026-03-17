@@ -29,7 +29,7 @@ program
   .requiredOption('-d, --diff <diff>', 'git diff content or path to diff file')
   .option('-v, --verbose', 'show detailed analysis', false)
   .action(async (options: { diff: string; verbose: boolean }) => {
-    const diffContent = options.diff.startsWith('/')
+    const diffContent = fs.existsSync(options.diff)
       ? fs.readFileSync(options.diff, 'utf-8')
       : options.diff;
 
@@ -79,7 +79,7 @@ program
   .requiredOption('-d, --diff <diff>', 'git diff content or path to diff file')
   .option('--title-only', 'only generate title', false)
   .action(async (options: { diff: string; titleOnly: boolean }) => {
-    const diffContent = options.diff.startsWith('/')
+    const diffContent = fs.existsSync(options.diff)
       ? fs.readFileSync(options.diff, 'utf-8')
       : options.diff;
 
@@ -102,7 +102,7 @@ program
   .description('Calculate complexity score for a diff')
   .requiredOption('-d, --diff <diff>', 'git diff content or path to diff file')
   .action(async (options: { diff: string }) => {
-    const diffContent = options.diff.startsWith('/')
+    const diffContent = fs.existsSync(options.diff)
       ? fs.readFileSync(options.diff, 'utf-8')
       : options.diff;
 

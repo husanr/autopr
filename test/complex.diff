@@ -1,0 +1,64 @@
+diff --git a/src/core/DiffAnalyzer.ts b/src/core/DiffAnalyzer.ts
+index abc123..def456 100644
+--- a/src/core/DiffAnalyzer.ts
++++ b/src/core/DiffAnalyzer.ts
+@@ -1,5 +1,15 @@
+ /**
+- * Basic diff analyzer
++ * Core diff analysis module for AutoPR
++ * Analyzes git diffs and extracts meaningful information
++ * Supports multiple programming languages
++ * Provides intelligent code review capabilities
+  */
+ 
++export interface DiffAnalysis {
++  summary: string;
++  filesChanged: number;
++  additions: number;
++  deletions: number;
++  keyChanges: string[];
++  languageBreakdown: Record<string, number>;
++}
++
+ export class DiffAnalyzer {
+   analyze(diff: string) {
+     return { summary: 'TODO' };
+@@ -10,3 +20,15 @@ export class DiffAnalyzer {
+     // Parse the diff content
+     // Count additions and deletions
+     // Extract file changes
++    const lines = diff.split('\n');
++    let additions = 0;
++    let deletions = 0;
++    
++    // Process each line
++    for (const line of lines) {
++      if (line.startsWith('+') && !line.startsWith('+++')) {
++        additions++;
++      } else if (line.startsWith('-') && !line.startsWith('---')) {
++        deletions++;
++      }
++    }
++    
++    return { summary: 'Basic analysis', filesChanged: 1, additions, deletions };
+   }
+ }
+diff --git a/package.json b/package.json
+index 123456..789abc 100644
+--- a/package.json
++++ b/package.json
+@@ -1,5 +1,10 @@
+ {
+-  "name": "basic-project"
++  "name": "@openclaw/autopr",
++  "version": "0.1.0",
++  "description": "AI-Powered Pull Request Assistant",
++  "main": "dist/index.js",
++  "scripts": {
++    "build": "tsc",
++    "test": "jest"
++  },
++  "dependencies": {
++    "commander": "^12.1.0"
++  }
+ }
