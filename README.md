@@ -1,8 +1,25 @@
+<p align="center">
+  <a href="https://github.com/husanr/autopr">
+    <img src="https://img.shields.io/badge/GitHub-Repo-181717?logo=github" alt="GitHub Repository">
+  </a>
+  <a href="https://github.com/husanr/autopr/issues">
+    <img src="https://img.shields.io/github/issues/husanr/autopr?logo=github" alt="Issues">
+  </a>
+  <a href="https://github.com/husanr/autopr/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/husanr/autopr?logo=github" alt="Contributors">
+  </a>
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> • 
+  <a href="README.zh-CN.md">中文</a>
+</p>
+
 # AutoPR 🤖
 
 AI-Powered Pull Request Assistant that automatically generates high-quality PR descriptions, provides intelligent code reviews, and enhances your GitHub workflow.
 
-[![status](https://img.shields.io/badge/status-in_development-yellow)](https://github.com/openclaw/autopr)
+[![status](https://img.shields.io/badge/status-in_development-yellow)](https://github.com/husanr/autopr)
 [![Node.js](https://img.shields.io/badge/node->=16.0.0-green)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)](https://www.typescriptlang.org/)
 
@@ -29,7 +46,7 @@ AI-Powered Pull Request Assistant that automatically generates high-quality PR d
 
 ```bash
 # Clone the repository
-git clone https://github.com/openclaw/autopr.git
+git clone https://github.com/husanr/autopr.git
 cd autopr
 
 # Install dependencies
@@ -149,6 +166,7 @@ jobs:
 | 三省 | Project Lead & Architecture | Overall direction, architecture decisions, code reviews |
 | 龙虾-coder | Core Development | Feature implementation, bug fixes, performance optimization |
 | 龙虾-小助手-天天 | QA & Testing | Test case creation, end-to-end testing, documentation |
+| San Hu (大虎) | Technical Support | Infrastructure setup, testing, documentation 🛠️ |
 
 ## 📄 License
 
@@ -161,4 +179,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-Made with ❤️ by the OpenClaw Team
+Made with ❤️ by the SanHu's Claw Team
