@@ -28,7 +28,8 @@ program
   .description('Analyze a git diff')
   .requiredOption('-d, --diff <diff>', 'git diff content or path to diff file')
   .option('-v, --verbose', 'show detailed analysis', false)
-  .action(async (options: { diff: string; verbose: boolean }) => {
+  .option('--json', 'output as JSON', false)
+  .action(async (options: { diff: string; verbose: boolean; json: boolean }) => {
     const diffContent = fs.existsSync(options.diff)
       ? fs.readFileSync(options.diff, 'utf-8')
       : options.diff;
@@ -55,6 +56,25 @@ program
     }
     if (hasTestChanges(analysis.keyChanges)) {
       console.log('\n🧪 检测到测试变更');
+    }
+    
+    // JSON 输出模式
+    if (options.json) {
+      const result = {
+        summary: analysis.summary,
+        filesChanged: analysis.filesChanged,
+        additions: analysis.additions,
+        deletions: analysis.deletions,
+        netChange: analysis.additions - analysis.deletions,
+        complexity: calculateComplexityScore(analysis),
+        complexityLevel: getComplexityLevel(calculateComplexityScore(analysis)),
+        hasBreakingChanges: hasBreakingChanges(analysis.keyChanges),
+        hasTestChanges: hasTestChanges(analysis.keyChanges),
+        languages: analysis.languageBreakdown,
+        keyChanges: analysis.keyChanges
+      };
+      console.log(JSON.stringify(result, null, 2));
+      return;
     }
     
     // 详细输出
@@ -184,6 +204,53 @@ program
       console.log('═══════════════════════════════\n');
     } catch (error) {
       console.error('Error:', error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('stats')
+  .description('Show project statistics from git history')
+  .option('--author <name>', 'filter by author name')
+  .option('--since <date>', 'filter commits since date (YYYY-MM-DD)')
+  .action(async (options: { author?: string; since?: string }) => {
+    const { execSync } = await import('child_process');
+    
+    try {
+      let cmd = 'git log --pretty=format:"%an|%ae|%ad|%s" --date=short';
+      if (options.since) cmd += ` --since="${options.since}"`;
+      
+      const log = execSync(cmd, { encoding: 'utf-8' });
+      const commits = log.trim().split('\n').filter(Boolean).map(line => {
+        const [author, email, date, subject] = line.split('|');
+        return { author, email, date, subject };
+      });
+      
+      // 按作者过滤
+      const filtered = options.author 
+        ? commits.filter(c => c.author.includes(options.author!))
+        : commits;
+      
+      // 统计
+      const authorStats: Record<string, number> = {};
+      filtered.forEach(c => {
+        authorStats[c.author] = (authorStats[c.author] || 0) + 1;
+      });
+      
+      console.log('\n📊 Project Statistics:');
+      console.log('═══════════════════════════════');
+      console.log(`Total commits: ${filtered.length}`);
+      if (options.since) console.log(`Since: ${options.since}`);
+      if (options.author) console.log(`Author: ${options.author}`);
+      console.log('\nCommits by author:');
+      Object.entries(authorStats)
+        .sort(([,a], [,b]) => b - a)
+        .forEach(([name, count]) => {
+          console.log(`  ${name}: ${count} commits`);
+        });
+      console.log('═══════════════════════════════\n');
+    } catch (error) {
+      console.error('Error running git log:', error);
       process.exit(1);
     }
   });
