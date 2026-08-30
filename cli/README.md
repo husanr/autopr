@@ -1,182 +1,60 @@
-<p align="center">
-  <a href="https://github.com/husanr/autopr">
-    <img src="https://img.shields.io/badge/GitHub-Repo-181717?logo=github" alt="GitHub Repository">
-  </a>
-  <a href="https://github.com/husanr/autopr/issues">
-    <img src="https://img.shields.io/github/issues/husanr/autopr?logo=github" alt="Issues">
-  </a>
-  <a href="https://github.com/husanr/autopr/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/husanr/autopr?logo=github" alt="Contributors">
-  </a>
-</p>
+# AutoPR CLI ⌨️
 
-<p align="center">
-  <a href="README.md">English</a> • 
-  <a href="README.zh-CN.md">中文</a>
-</p>
+AI-powered pull request assistant for the terminal: diff analysis, PR description generation, and code quality review.
 
-# AutoPR 🤖
+> The full product (Chrome extension + CLI) lives in the [AutoPR](https://github.com/husanr/autopr) repository.
 
-AI-Powered Pull Request Assistant that automatically generates high-quality PR descriptions, provides intelligent code reviews, and enhances your GitHub workflow.
-
-[![status](https://img.shields.io/badge/status-in_development-yellow)](https://github.com/husanr/autopr)
-[![Node.js](https://img.shields.io/badge/node->=16.0.0-green)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)](https://www.typescriptlang.org/)
-
-## ✨ Features
-
-- **Automatic PR Descriptions**: Analyzes your code changes and generates clear, concise PR descriptions in Chinese
-- **Intelligent Code Review**: Catches security vulnerabilities, performance issues, and style violations
-- **Multi-Language Support**: Works with JavaScript, TypeScript, Python, Go, Rust, Java, C++, C#, Ruby, PHP, HTML, CSS, JSON, Markdown, YAML, and more
-- **CLI Tool**: Easy-to-use command-line interface for local development
-- **GitHub Actions Integration**: Seamless CI/CD integration for automated PR workflows
-- **Changelog Generation**: Automatically creates changelog entries for releases
-- **Real-time Analysis**: Processes diffs instantly with detailed statistics
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js >= 16.0.0
-- npm or yarn
-- GitHub Personal Access Token (with `repo` scope)
-- AI API Key (OpenAI, Claude, or other supported providers)
-
-### Installation
+## Install
 
 ```bash
-# Clone the repository
-git clone https://github.com/husanr/autopr.git
-cd autopr
-
-# Install dependencies
 npm install
-
-# Build the project
 npm run build
-
-# Link globally (optional)
-npm link
+npm link   # optional: expose `autopr` command globally
 ```
 
-### Usage
-
-#### Basic Diff Analysis
+## Usage
 
 ```bash
-# From a file
-autopr analyze -d /path/to/diff.patch
+# Analyze a diff (file path or inline content)
+autopr analyze -d path/to/change.diff
+autopr analyze -d path/to/change.diff --json   # machine-readable output
 
-# Or from stdin
-git diff HEAD~1 | autopr analyze
+# Generate a PR description
+autopr pr-description -d path/to/change.diff
+
+# Complexity score
+autopr complexity -d path/to/change.diff
+
+# Review an open PR (prints analysis; --post publishes it as a PR comment)
+autopr review -p 42 -o husanr -r autopr -t $GITHUB_TOKEN --post
+
+# Project statistics from git history
+autopr stats
+
+# Performance benchmark
+autopr benchmark
 ```
 
-#### Generate PR Description with AI
+## AI Configuration
+
+Set these environment variables to enable real LLM generation (falls back to rule templates without a key):
+
+| Env var | Description | Default |
+|---|---|---|
+| `AUTO_PR_AI_API_KEY` | API key (fallback: `OPENAI_API_KEY`) | — |
+| `AUTO_PR_AI_BASE_URL` | Any OpenAI-compatible endpoint | `https://api.openai.com/v1` |
+| `AUTO_PR_AI_MODEL` | Model name | `gpt-4o-mini` |
 
 ```bash
-autopr analyze \
-  -d /path/to/diff.patch \
-  -k YOUR_AI_API_KEY \
-  -m gpt-4
+export AUTO_PR_AI_API_KEY=sk-...
+export AUTO_PR_AI_BASE_URL=https://api.deepseek.com/v1   # DeepSeek, OpenRouter, ...
+export AUTO_PR_AI_MODEL=deepseek-chat
+autopr pr-description -d test/sample.diff
 ```
 
-#### Create GitHub PR Review
+## Development
 
 ```bash
-autopr review \
-  -p 42 \
-  -t YOUR_GITHUB_TOKEN \
-  -o repository-owner \
-  -r repository-name \
-  -k YOUR_AI_API_KEY
+npm test        # Vitest unit tests
+npm run build   # TypeScript compile
 ```
-
-### Available Commands
-
-| Command | Description | Options |
-|---------|-------------|---------|
-| `analyze` | Analyze a git diff and generate content | `-d, --diff-file`, `-k, --api-key`, `-m, --model` |
-| `review` | Automated code review for a PR | `-p, --pr-number`, `-t, --token`, `-o, --owner`, `-r, --repo`, `-k, --api-key` |
-
-## 🛠️ Development
-
-### Project Structure
-
-```
-src/
-├── cli/           # CLI entry point
-├── core/          # Core analysis logic
-│   └── DiffAnalyzer.ts
-├── github/        # GitHub API integration
-│   └── GitHubClient.ts
-├── ai/            # AI integrations
-│   └── AIGenerator.ts
-└── utils/         # Utility functions
-```
-
-### Scripts
-
-| Script | Description |
-|--------|-------------|
-| `npm run build` | Compile TypeScript to JavaScript |
-| `npm run dev` | Watch mode for development |
-| `npm test` | Run tests (coming soon) |
-| `npm run lint` | Run ESLint |
-
-## 🔧 Configuration
-
-### Environment Variables
-
-```bash
-# AI Provider Configuration
-AUTO_PR_AI_PROVIDER=openai
-AUTO_PR_AI_API_KEY=your-api-key
-AUTO_PR_AI_MODEL=gpt-4
-
-# GitHub Configuration  
-AUTO_PR_GITHUB_TOKEN=your-github-token
-```
-
-### GitHub Actions Workflow
-
-```yaml
-name: AutoPR
-on: [pull_request]
-jobs:
-  autopr:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: Install AutoPR
-        run: npm install -g @openclaw/autopr
-      - name: Run AutoPR Analysis
-        run: autopr analyze -k ${{ secrets.AI_API_KEY }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
-## 👥 Team
-
-| Member | Role | Responsibilities |
-|--------|------|------------------|
-| 三省 | Project Lead & Architecture | Overall direction, architecture decisions, code reviews |
-| 龙虾-coder | Core Development | Feature implementation, bug fixes, performance optimization |
-| 龙虾-小助手-天天 | QA & Testing | Test case creation, end-to-end testing, documentation |
-| San Hu (大虎) | Technical Support | Infrastructure setup, testing, documentation 🛠️ |
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) for details.
-
-## 🙏 Acknowledgments
-
-- [Octokit](https://github.com/octokit/octokit.js) for GitHub API client
-- All contributors and users of AutoPR
-
----
-
-Made with ❤️ by the SanHu's Claw Team

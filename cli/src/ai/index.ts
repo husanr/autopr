@@ -4,15 +4,50 @@
  */
 
 import { DiffAnalysis } from '../core/DiffAnalyzer.js';
+import { AIGenerator } from './AIGenerator.js';
+
+/**
+ * AI 配置（环境变量）
+ * - AUTO_PR_AI_API_KEY: API key（必填才能启用 AI；也兼容 OPENAI_API_KEY）
+ * - AUTO_PR_AI_BASE_URL: OpenAI 兼容端点，默认 https://api.openai.com/v1
+ * - AUTO_PR_AI_MODEL: 模型名，默认 gpt-4o-mini
+ */
+const AI_API_KEY = process.env.AUTO_PR_AI_API_KEY || process.env.OPENAI_API_KEY || '';
+const AI_BASE_URL = process.env.AUTO_PR_AI_BASE_URL || 'https://api.openai.com/v1';
+const AI_MODEL = process.env.AUTO_PR_AI_MODEL || 'gpt-4o-mini';
+
+/** 是否配置了 AI key（决定使用真 LLM 还是规则模板） */
+export function isAIConfigured(): boolean {
+  return AI_API_KEY.length > 0;
+}
 
 /**
  * 生成 PR 描述 - 完整版
+ * 配置了 AUTO_PR_AI_API_KEY 时调用真实 LLM，否则回退到规则模板
  * @param analysis - Diff 分析结果
  */
 export async function generatePRDescription(analysis: DiffAnalysis, options?: {
   includeTestChanges?: boolean;
   includeBreakingChanges?: boolean;
 }): Promise<string> {
+  if (isAIConfigured()) {
+    const generator = new AIGenerator({ apiKey: AI_API_KEY, baseUrl: AI_BASE_URL, model: AI_MODEL });
+    try {
+      return await generator.generatePRDescription(analysis);
+    } catch (err) {
+      // AI 调用失败时降级到模板，避免整个命令崩溃
+      console.error(`\n⚠️ AI 调用失败(${(err as Error).message})，降级为规则模板输出`);
+      return generateTemplateDescription(analysis, options);
+    }
+  }
+  return generateTemplateDescription(analysis, options);
+}
+
+/** 规则模板生成 PR 描述（无 AI key 时的降级路径） */
+function generateTemplateDescription(analysis: DiffAnalysis, options?: {
+  includeTestChanges?: boolean;
+  includeBreakingChanges?: boolean;
+}): string {
   const { summary, filesChanged, additions, deletions, keyChanges, languageBreakdown } = analysis;
   const { includeTestChanges = true, includeBreakingChanges = true } = options || {};
 

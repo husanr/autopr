@@ -7,8 +7,9 @@
 import { Command } from 'commander';
 import { DiffAnalyzer } from '../core/DiffAnalyzer.js';
 import { GitHubClient } from '../github/GitHubClient.js';
-import { 
-  generatePRDescription, 
+import {
+  generatePRDescription,
+  isAIConfigured,
   hasBreakingChanges,
   hasTestChanges,
   calculateComplexityScore,
@@ -107,7 +108,11 @@ program
     const analyzer = new DiffAnalyzer();
     const analysis = await analyzer.analyze(diffContent);
 
-    // Generate AI-powered description
+    if (!isAIConfigured()) {
+      console.log('\nℹ️ 未检测到 AUTO_PR_AI_API_KEY，将使用规则模板（设置环境变量可启用真实 AI 生成）');
+    }
+
+    // Generate AI-powered description (LLM if configured, template otherwise)
     const description = await generatePRDescription(analysis);
 
     // Output results
@@ -153,12 +158,19 @@ program
   .command('review')
   .description('Automated code review for a PR')
   .requiredOption('-p, --pr <number>', 'Pull Request number')
-  .requiredOption('-t, --token <token>', 'GitHub personal access token')
+  .option('-t, --token <token>', 'GitHub personal access token (fallback: GITHUB_TOKEN env)')
   .requiredOption('-o, --owner <owner>', 'GitHub repository owner')
   .requiredOption('-r, --repo <repo>', 'GitHub repository name')
-  .action(async (options: { pr: string; token: string; owner: string; repo: string }) => {
+  .option('--post', 'post the review result as a comment on the PR', false)
+  .action(async (options: { pr: string; token?: string; owner: string; repo: string; post: boolean }) => {
+    const token = options.token || process.env.GITHUB_TOKEN || '';
+    if (!token) {
+      console.error('❌ 需要 GitHub token：通过 -t 参数或设置 GITHUB_TOKEN 环境变量');
+      process.exit(1);
+    }
+
     const client = new GitHubClient({
-      token: options.token,
+      token,
       owner: options.owner,
       repo: options.repo
     });
@@ -175,7 +187,10 @@ program
       const complexity = calculateComplexityScore(analysis);
       const level = getComplexityLevel(complexity);
       
-      // Generate description
+      // Generate description (LLM if configured, template otherwise)
+      if (!isAIConfigured()) {
+        console.log('\nℹ️ 未检测到 AUTO_PR_AI_API_KEY，将使用规则模板（设置环境变量可启用真实 AI）');
+      }
       const description = await generatePRDescription(analysis);
 
       console.log('\n🔍 PR Review Results:');
@@ -202,6 +217,13 @@ program
       console.log('\nGenerated Description:');
       console.log(description);
       console.log('═══════════════════════════════\n');
+
+      // 可选：把审查结果发布为 PR 评论
+      if (options.post) {
+        const comment = `## 🤖 AutoPR Review\n\n${description}`;
+        await client.createPullRequestComment(parseInt(options.pr), comment);
+        console.log(`✅ 审查结果已发布为 PR #${options.pr} 的评论`);
+      }
     } catch (error) {
       console.error('Error:', error);
       process.exit(1);
@@ -258,7 +280,7 @@ program
 program
   .command('benchmark')
   .description('Benchmark performance')
-  .action(() => {
+  .action(async () => {
     const analyzer = new DiffAnalyzer();
     
     // 生成一个大的 diff 进行测试
@@ -274,7 +296,7 @@ program
     }
     
     const start = Date.now();
-    const analysis = analyzer.analyze(largeDiff);
+    const analysis = await analyzer.analyze(largeDiff);
     const end = Date.now();
     
     console.log('\n⚡ Performance Benchmark:');

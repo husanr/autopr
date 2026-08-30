@@ -1,6 +1,7 @@
 /**
  * AI integration module for AutoPR
  * Handles LLM calls to generate PR descriptions and reviews
+ * Supports any OpenAI-compatible chat completions API.
  */
 
 import { DiffAnalysis } from '../core/DiffAnalyzer';
@@ -17,14 +18,17 @@ export interface GeneratedContent {
   changelogEntry?: string;
 }
 
+const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
+const DEFAULT_MODEL = 'gpt-4o-mini';
+
 export class AIGenerator {
   private readonly config: AIGeneratorConfig;
-  private readonly DEFAULT_MODEL = 'gpt-4';
 
   constructor(config: AIGeneratorConfig) {
     this.config = {
-      ...config,
-      model: config.model || this.DEFAULT_MODEL
+      apiKey: config.apiKey,
+      model: config.model || DEFAULT_MODEL,
+      baseUrl: (config.baseUrl || DEFAULT_BASE_URL).replace(/\/+$/, '')
     };
   }
 
@@ -119,10 +123,55 @@ Write a concise changelog entry in the format:
 Focus on user-facing changes and significant internal improvements. Keep it to one line if possible.`;
   }
 
+  /**
+   * Call an OpenAI-compatible chat completions endpoint.
+   *
+   * Supports any provider implementing the OpenAI API shape:
+   * - OpenAI: https://api.openai.com/v1
+   * - DeepSeek: https://api.deepseek.com/v1
+   * - OpenRouter: https://openrouter.ai/api/v1
+   * - DashScope (Qwen): https://dashscope.aliyuncs.com/compatible-mode/v1
+   * - any self-hosted / local gateway (vLLM, Ollama, LM Studio, ...)
+   */
   private async callLLM(prompt: string): Promise<string> {
-    // TODO: Implement actual LLM API call
-    // For now, return a placeholder
-    console.log('LLM Prompt:', prompt);
-    return 'Auto-generated content based on the provided prompt.';
+    const { apiKey, baseUrl, model } = this.config;
+    const endpoint = `${baseUrl}/chat/completions`;
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are an expert software engineer specializing in code review and PR documentation. Be precise, professional, and concise.'
+          },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 2000
+      })
+    });
+
+    if (!response.ok) {
+      const detail = await response.text().catch(() => '');
+      throw new Error(`LLM API error ${response.status}: ${detail.slice(0, 300)}`);
+    }
+
+    const data = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string }; content?: string }>;
+    };
+    const content = data?.choices?.[0]?.message?.content || data?.choices?.[0]?.content;
+
+    if (!content) {
+      throw new Error(`LLM API returned unexpected format: ${JSON.stringify(data).slice(0, 200)}`);
+    }
+
+    return content.trim();
   }
 }

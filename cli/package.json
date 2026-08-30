@@ -1,7 +1,7 @@
 {
-  "name": "@openclaw/autopr",
-  "version": "0.1.0",
-  "description": "AI-Powered Pull Request Assistant that automatically generates high-quality PR descriptions, provides intelligent code reviews, and enhances your GitHub workflow.",
+  "name": "autopr-cli",
+  "version": "0.2.0",
+  "description": "AutoPR CLI - AI-powered pull request assistant: diff analysis, PR description generation, and code quality review (OpenAI-compatible APIs).",
   "main": "dist/index.js",
   "bin": {
     "autopr": "dist/cli/index.js"
@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "echo \"No tests yet\"",
+    "test": "vitest run",
     "start": "node dist/cli/index.js"
   },
   "keywords": [
@@ -28,7 +28,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.2",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "vitest": "^4.1.11"
   },
   "files": [
     "dist/**/*",
