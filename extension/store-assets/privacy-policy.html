@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoPR - Privacy Policy</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.7; }
+    h1 { font-size: 28px; margin-bottom: 8px; }
+    .updated { color: #666; font-size: 14px; margin-bottom: 32px; }
+    h2 { font-size: 20px; margin-top: 28px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    p { margin: 12px 0; }
+    ul { margin: 8px 0 16px 24px; }
+    li { margin-bottom: 6px; }
+    .contact { background: #f5f5f5; padding: 16px 20px; border-radius: 8px; margin-top: 24px; }
+    a { color: #1a73e8; }
+  </style>
+</head>
+<body>
+  <h1>🔒 Privacy Policy</h1>
+  <p class="updated">Last updated: April 20, 2026</p>
+
+  <h2>Overview</h2>
+  <p><strong>AutoPR - AI Pull Request Assistant</strong> ("AutoPR") is a Chrome extension that helps developers generate Pull Request descriptions and perform AI-powered code reviews on GitHub.</p>
+  <p>We take your privacy seriously. This policy explains what data we collect, how we use it, and how we protect it.</p>
+
+  <h2>What We DO NOT Collect</h2>
+  <ul>
+    <li>We do <strong>not</strong> collect any personal information</li>
+    <li>We do <strong>not</strong> track your browsing activity</li>
+    <li>We do <strong>not</strong> store or transmit your code to any server we control</li>
+    <li>We do <strong>not</strong> use analytics or tracking services</li>
+    <li>We do <strong>not</strong> sell or share any user data</li>
+  </ul>
+
+  <h2>Data Stored Locally</h2>
+  <p>The following data is stored <strong>only on your device</strong> using Chrome's local storage API (<code>chrome.storage.sync</code>):</p>
+  <ul>
+    <li><strong>API Configuration</strong> — Your AI provider API key, base URL, and selected model</li>
+    <li><strong>Usage Count</strong> — Monthly usage counter for free tier limits</li>
+    <li><strong>Plan Type</strong> — Whether you are using the Free or Pro plan</li>
+  </ul>
+  <p>This data is never sent to any server except the AI provider you configure (e.g., OpenRouter, OpenAI, DeepSeek).</p>
+
+  <h2>How the Extension Works</h2>
+  <p>When you use AutoPR on a GitHub Pull Request page:</p>
+  <ol>
+    <li>The extension reads the code changes (diff) from the current PR page</li>
+    <li>The diff is sent <strong>directly</strong> to your chosen AI provider's API</li>
+    <li>The AI response is displayed in the extension panel</li>
+  </ol>
+  <p>The diff data is <strong>not</strong> stored, logged, or transmitted to any server other than your configured AI provider.</p>
+
+  <h2>Host Permissions</h2>
+  <p>The extension requests permission for <code>https://github.com/*</code> solely to:</p>
+  <ul>
+    <li>Detect when you are on a GitHub Pull Request page</li>
+    <li>Inject the AutoPR panel into the page</li>
+    <li>Read code changes (diff) from the PR for AI analysis</li>
+  </ul>
+
+  <h2>Third-Party Services</h2>
+  <p>You may configure AutoPR to use third-party AI services:</p>
+  <ul>
+    <li><strong>OpenRouter</strong> — <a href="https://openrouter.ai/privacy">Privacy Policy</a></li>
+    <li><strong>OpenAI</strong> — <a href="https://openai.com/privacy/">Privacy Policy</a></li>
+    <li><strong>DeepSeek</strong> — <a href="https://platform.deepseek.com/">Privacy Policy</a></li>
+  </ul>
+  <p>When you use these services, your code diff is sent directly to their APIs. Their respective privacy policies apply.</p>
+
+  <h2>Open Source</h2>
+  <p>AutoPR is open source. You can review the complete source code at any time:</p>
+  <p><a href="https://github.com/husanr/auto-pr">https://github.com/husanr/auto-pr</a></p>
+
+  <h2>Changes to This Policy</h2>
+  <p>We may update this privacy policy from time to time. Changes will be reflected in the "Last updated" date above.</p>
+
+  <div class="contact">
+    <h2>Contact</h2>
+    <p>If you have any questions about this privacy policy, please contact us:</p>
+    <p>📧 GitHub: <a href="https://github.com/husanr/auto-pr/issues">Open an Issue</a></p>
+  </div>
+</body>
+</html>

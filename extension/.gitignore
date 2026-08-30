@@ -1,0 +1,22 @@
+# Node
+node_modules/
+
+# Build
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Screenshots (for Chrome Web Store)
+screenshots/
+
+# Local config (don't commit API keys)
+*.local.*
+.env

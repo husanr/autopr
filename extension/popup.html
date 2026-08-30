@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ===== NovaPulse DESIGN.md — AutoPR Implementation ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 380px;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #0B0F1A;
+      color: #F1F5F9;
+      padding: 20px;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* --- Header --- */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      position: relative;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #7C3AED, #06B6D4, transparent);
+    }
+    .header .logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .header h1 span {
+      background: linear-gradient(135deg, #7C3AED, #06B6D4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .status-badge {
+      margin-left: auto;
+      background: rgba(16,185,129,0.15);
+      color: #10B981;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 99px;
+      letter-spacing: 0.04em;
+    }
+    .status-badge.offline {
+      background: rgba(245,158,11,0.15);
+      color: #F59E0B;
+    }
+
+    /* --- Section Labels --- */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94A3B8;
+      margin-bottom: 12px;
+    }
+
+    /* --- Form --- */
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94A3B8;
+      margin-bottom: 6px;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .input-wrapper .icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      background: #1E2540;
+      border: 1px solid #2A3158;
+      border-radius: 10px;
+      color: #F1F5F9;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+      -webkit-appearance: none;
+    }
+    input::placeholder { color: #4A5280; }
+    input:focus, select:focus {
+      border-color: #7C3AED;
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
+    }
+    select {
+      padding-left: 36px;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394A3B8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+    .help-text {
+      font-size: 11px;
+      color: #4A5280;
+      margin-top: 6px;
+    }
+
+    /* --- Divider --- */
+    .divider {
+      height: 1px;
+      background: #2A3158;
+      margin: 20px 0;
+      position: relative;
+    }
+    .divider::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 3px;
+      background: linear-gradient(90deg, #7C3AED, #06B6D4);
+      border-radius: 2px;
+    }
+
+    /* --- Buttons --- */
+    .btn {
+      width: 100%;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 4px 14px rgba(124,58,237,0.4);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* --- Status Toast --- */
+    .toast {
+      text-align: center;
+      padding: 8px 12px;
+      margin-top: 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      display: none;
+      animation: slideIn 0.2s ease;
+    }
+    .toast.success {
+      display: block;
+      background: rgba(16,185,129,0.1);
+      color: #10B981;
+      border: 1px solid rgba(16,185,129,0.2);
+    }
+    .toast.error {
+      display: block;
+      background: rgba(239,68,68,0.1);
+      color: #EF4444;
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- Usage Card --- */
+    .usage-card {
+      background: #141929;
+      border: 1px solid #2A3158;
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .usage-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .usage-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #94A3B8;
+    }
+    .usage-count {
+      font-size: 12px;
+      color: #94A3B8;
+    }
+    .usage-count strong {
+      color: #06B6D4;
+      font-weight: 700;
+    }
+    .usage-bar {
+      height: 6px;
+      background: #1E2540;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .usage-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7C3AED, #06B6D4);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+    .usage-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    .usage-plan {
+      font-size: 11px;
+      color: #4A5280;
+    }
+    .upgrade-link {
+      font-size: 12px;
+      color: #7C3AED;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .upgrade-link:hover { color: #A78BFA; }
+
+    /* --- Footer --- */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+      padding-top: 16px;
+      position: relative;
+    }
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 3px;
+      background: linear-gradient(90deg, #7C3AED, #06B6D4);
+      border-radius: 2px;
+    }
+    .footer a {
+      color: #4A5280;
+      text-decoration: none;
+      font-size: 12px;
+      transition: color 0.2s;
+    }
+    .footer a:hover { color: #7C3AED; }
+    .footer .dot {
+      color: #2A3158;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">🤖</div>
+    <h1>Auto<span>PR</span></h1>
+    <span class="status-badge" id="statusBadge">● Ready</span>
+  </div>
+
+  <!-- Settings Section -->
+  <div class="section-label">⚙️ API Settings</div>
+
+  <div class="form-group">
+    <label>Provider</label>
+    <div class="input-wrapper">
+      <span class="icon">🔌</span>
+      <select id="provider">
+        <option value="openrouter">OpenRouter（免费模型）</option>
+        <option value="openai">OpenAI</option>
+        <option value="deepseek">DeepSeek</option>
+        <option value="custom">自定义</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>API Key</label>
+    <div class="input-wrapper">
+      <span class="icon">🔑</span>
+      <input type="password" id="apiKey" placeholder="sk-or-v1-...">
+    </div>
+    <div class="help-text" id="apiKeyHelp">OpenRouter 免费注册获取 Key: openrouter.ai</div>
+  </div>
+
+  <div class="form-group">
+    <label>Base URL</label>
+    <div class="input-wrapper">
+      <span class="icon">🌐</span>
+      <input type="text" id="apiBase" placeholder="https://api.openai.com/v1">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Model</label>
+    <div class="input-wrapper">
+      <span class="icon">🧠</span>
+      <select id="model">
+        <option value="qwen/qwen-2.5-coder-32b-instruct">Qwen 2.5 Coder 32B</option>
+        <option value="google/gemma-2-9b-it:free">Gemma 2 9B（免费）</option>
+        <option value="meta-llama/llama-3.1-8b-instruct:free">Llama 3.1 8B（免费）</option>
+        <option value="mistralai/mistral-7b-instruct:free">Mistral 7B（免费）</option>
+        <option value="gpt-4o">GPT-4o</option>
+        <option value="gpt-4o-mini">GPT-4o Mini</option>
+        <option value="deepseek-chat">DeepSeek Chat</option>
+        <option value="custom">自定义</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group" id="customModelGroup" style="display:none">
+    <label>Custom Model</label>
+    <div class="input-wrapper">
+      <span class="icon">✏️</span>
+      <input type="text" id="customModel" placeholder="模型标识符">
+    </div>
+  </div>
+
+  <button class="btn btn-primary" id="saveBtn">💾 Save Configuration</button>
+  <div class="toast" id="toast"></div>
+
+  <!-- Divider -->
+  <div class="divider"></div>
+
+  <!-- Usage -->
+  <div class="usage-card">
+    <div class="usage-header">
+      <span class="usage-title">📊 Monthly Usage</span>
+      <span class="usage-count"><strong id="usageCurrent">3</strong> / <span id="usageLimit">20</span></span>
+    </div>
+    <div class="usage-bar">
+      <div class="usage-fill" id="usageFill" style="width: 15%"></div>
+    </div>
+    <div class="usage-footer">
+      <span class="usage-plan">Free Plan</span>
+      <a href="https://github.com/husanr/auto-pr/discussions" target="_blank" id="upgradeLink" class="upgrade-link">Upgrade Pro →</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <a href="https://github.com/husanr/auto-pr" target="_blank">⭐ GitHub</a>
+    <span class="dot">·</span>
+    <a href="https://github.com/husanr/auto-pr#readme" target="_blank">📖 Docs</a>
+    <span class="dot">·</span>
+    <span style="color:#2A3158;font-size:11px">v1.2.0</span>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
