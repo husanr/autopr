@@ -68,9 +68,11 @@ Without a key, the CLI gracefully falls back to the built-in rule templates.
 
 ## 📸 Screenshots
 
-| Extension panel | CLI output |
+| Extension panel on a PR page | Settings (popup) |
 |---|---|
-| _coming soon_ | _coming soon_ |
+| ![PR panel](images/extension-panel.png) | ![Settings](images/popup-settings.png) |
+
+![PR page with AutoPR panel](images/pr-page-top.png)
 
 ## 📁 Project Structure
 

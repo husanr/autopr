@@ -68,9 +68,11 @@ node dist/cli/index.js review -p 42 -o husanr -r autopr --post
 
 ## 📸 截图
 
-| 扩展面板 | CLI 输出 |
+| PR 页面上的扩展面板 | 设置界面（popup） |
 |---|---|
-| _即将补充_ | _即将补充_ |
+| ![PR 面板](images/extension-panel.png) | ![设置](images/popup-settings.png) |
+
+![带 AutoPR 面板的 PR 页面](images/pr-page-top.png)
 
 ## 📁 项目结构
 
